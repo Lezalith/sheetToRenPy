@@ -21,17 +21,16 @@ sheetFilePath = pickFile()
 # File name with extension.
 sheetFile = sheetFilePath.split("\\")[-1]
 
-# Check if extension is ".gif"
+# Check if extension is ".png" or ".jpg"
 if sheetFile.split(".")[-1] not in ["png", "jpg"]:
     raise Exception("That is not a .png nor .jpg!")
 
 # File name without extension.
 sheetFileName = ".".join(sheetFile.split(".")[:-1])
 
-# print(gifFilePath)
-# print(gifFile)
-# print(gifFileName)
-
+# print(sheetFilePath)
+# print(sheetFile)
+# print(sheetFileName)
 
 
 ####### Preparing a directory for the output ######################################################
@@ -51,7 +50,7 @@ if not os.path.isdir(baseOutputDir):
     # ...create it.
     os.mkdir(baseOutputDir) 
 
-# Folder inside which this result will be placed, in the form of "baseOutputDir/gifFileName/"
+# Folder inside which this result will be placed, in the form of "baseOutputDir/sheetFileName/"
 sheetOutputDir = baseOutputDir + sheetFileName + "/"
  
 # This directory must not already exist.
@@ -70,11 +69,13 @@ from PIL import Image
 # Load in chosen file.
 im = Image.open(sheetFilePath)
 
-# Test values
+# TEST VALUES ######### 
 framesize = (120, 80)
 gridsize = (1, 6)
-amountOfFrames = None
+amountOfFrames = gridsize[0] * gridsize[1]
+#######################
 
+# REAL VALUES ######### 
 # framesize = eval(raw_input("Please give the size of one frame. This needs to be a tuple of (px width, px heigth) -- "))
 # gridsize = eval(raw_input("Please give the total size of grid. This needs to be a tuple of (rows, columns) -- "))
 
@@ -89,15 +90,20 @@ amountOfFrames = None
 # else:
 #     amountOfFrames = eval(amountOfFrames)
 
+#######################
+
 # List of file paths to individual frames.
 # Used in creating the .rpy file.
-# pathsToFrames = []
+pathsToFrames = []
 
+# Image dimensions
 imageWidth, imageHeigth = im.size
 
+# Frame dimensions
 oneFrameWidth = imageWidth // gridsize[1]
 oneFrameHeigth = imageHeigth // gridsize[0]
 
+# Index of the currently-being-iterated-over frame.
 frameIndex = 0
 
 # For every row...
@@ -106,39 +112,42 @@ for rowIndex in range(gridsize[0]):
     # For every column inside that row...
     for columnIndex in range(gridsize[1]):
 
+        # Top left corner of crop.
         x = oneFrameWidth * columnIndex
         y = oneFrameHeigth * rowIndex
+
+        # Bottom right corner of crop.
         xEnd = oneFrameWidth * (columnIndex + 1)
         yEnd = oneFrameHeigth * (rowIndex + 1)
 
         print("Creating a frame (coords:({}, {})): [{}, {}], [{}, {}]".format(rowIndex + 1, columnIndex + 1, x, y, xEnd, yEnd))
 
+        # Created frame.
         frame = im.crop( (x, y, xEnd, yEnd) )
 
+        # Filename of the saved frame.
+        # Format is "[chosen file without extension][index of the frame].png"
         saveFileName = sheetOutputDir + "{}{}.png".format(sheetFileName, frameIndex)
 
+        # Save the frame.
         frame.save(saveFileName)
 
+        # Save the frame path to a list.
+        # Used in creating the .rpy file.
+        pathsToFrames.append(saveFileName)
+
+        # Up the index for the next iteration.
         frameIndex += 1
 
-# # For every frame inside the loaded Image:
-# for frameIndex in range( im.n_frames ):
+        # End the loop if max amount of frames was given.
+        if frameIndex >= amountOfFrames:
+            break
 
-#     # Point at another frame.
-#     im.seek(frameIndex)
+    # End the loop if max amount of frames was given.
+    if frameIndex >= amountOfFrames:
+        break
 
-#     # Filename of the saved frame.
-#     # Format is "[chosen file without extension][index of the frame].png"
-#     saveFileName = gifOutputDir + "{}{}.png".format(gifFileName, frameIndex)
-
-#     # Save the frame.
-#     im.save( saveFileName )
-
-#     # Save the frame path to a list.
-#     # Used in creating the .rpy file.
-#     pathsToFrames.append(saveFileName)
-
-# print("\nSuccessfully saved all frames into \"{}\"\n\n###########################################################\n".format(gifOutputDir))
+print("\nSuccessfully saved all frames into \"{}\"\n\n###########################################################\n".format(sheetOutputDir))
 
 
 # ####### Optionally creating a .rpy file.
@@ -201,13 +210,13 @@ for rowIndex in range(gridsize[0]):
 # ####### Creating a .rpy file with an image statement. #############################################
 
 # # Path of the .rpy file with extension.
-# rpyFilePath = gifOutputDir + gifFileName + ".rpy"
+# rpyFilePath = sheetOutputDir + sheetFileName + ".rpy"
 
 # # Create the file.
 # with open(rpyFilePath, "w+") as f:
 
 #     # Image statement (first line)
-#     statement = "image " + gifFileName + ":\n"
+#     statement = "image " + sheetFileName + ":\n"
 
 #     f.write(statement)
 
