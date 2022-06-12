@@ -70,6 +70,20 @@ from PIL import Image
 # Load in chosen file.
 im = Image.open(sheetFilePath)
 
+framesize = eval(raw_input("Please give the size of one frame. This needs to be a tuple of (px width, px heigth) -- "))
+gridsize = eval(raw_input("Please give the total size of grid. This needs to be a tuple of (rows, columns) -- "))
+
+pauseInterval = raw_input("Pause interval between frames? float, default is 0.1 -- ")
+# Default, if nothing given.
+if not pauseInterval:
+    pauseInterval = "0.1"
+
+amountOfFrames = raw_input("How many frames are there? int, default of (num of rows given * num of cols given) -- ")
+if not amountOfFrames:
+    amountOfFrames = gridsize[0] * gridsize[1]
+else:
+    amountOfFrames = eval(amountOfFrames)
+
 # List of file paths to individual frames.
 # Used in creating the .rpy file.
 # pathsToFrames = []
@@ -116,14 +130,6 @@ im1.save("01.png")
 # ####### Settings for creating a Ren'Py image statement. ###########################################
 
 # print("\nYou will now be asked for some settings.\nDefault values are chosen when nothing is typed in.\n")
-
-# ### Time interval between frames. ###################################
-# pauseInterval = raw_input("Pause interval between frames? (float, default is 0.1) -- ")
-
-# # Default, if nothing given.
-# if not pauseInterval:
-
-#     pauseInterval = 0.1
 
 # # Convert it to a float.
 # else:
