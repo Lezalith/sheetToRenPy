@@ -34,32 +34,32 @@ sheetFileName = ".".join(sheetFile.split(".")[:-1])
 
 
 
-# ####### Preparing a directory for the output ######################################################
+####### Preparing a directory for the output ######################################################
 
-# # For checking and creating directories.
-# import os 
+# For checking and creating directories.
+import os 
 
-# # Folder inside which all results are placed.
-# #
-# # This is important because this directory is included in paths inside the generated .rpy file.
-# # "images/" means the result inside should be placed inside a project's "images" folder.
-# baseOutputDir = "images/"
+# Folder inside which all results are placed.
+#
+# This is important because this directory is included in paths inside the generated .rpy file.
+# "images/" means the result inside should be placed inside a project's "images" folder.
+baseOutputDir = "images/"
 
-# # If the directory doesn't already exist...
-# if not os.path.isdir(baseOutputDir):
+# If the directory doesn't already exist...
+if not os.path.isdir(baseOutputDir):
 
-#     # ...create it.
-#     os.mkdir(baseOutputDir) 
+    # ...create it.
+    os.mkdir(baseOutputDir) 
 
-# # Folder inside which this result will be placed, in the form of "baseOutputDir/gifFileName/"
-# gifOutputDir = baseOutputDir + gifFileName + "/"
+# Folder inside which this result will be placed, in the form of "baseOutputDir/gifFileName/"
+sheetOutputDir = baseOutputDir + sheetFileName + "/"
  
-# # This directory must not already exist.
-# if os.path.isdir(gifOutputDir):
-#     raise Exception("It looks like the directory for output, \"{}\", exists already!".format( baseOutputDir + gifFileName ))
+# This directory must not already exist.
+if os.path.isdir(sheetOutputDir):
+    raise Exception("It looks like the directory for output, \"{}\", exists already!".format( baseOutputDir + sheetFileName ))
 
-# # Create the directory.
-# os.mkdir(gifOutputDir)
+# Create the directory.
+os.mkdir(sheetOutputDir)
 
 
 ####### Sheet into frames ###########################################################################
@@ -115,7 +115,9 @@ for rowIndex in range(gridsize[0]):
 
         frame = im.crop( (x, y, xEnd, yEnd) )
 
-        frame.save("{}.png".format(frameIndex))
+        saveFileName = sheetOutputDir + "{}{}.png".format(sheetFileName, frameIndex)
+
+        frame.save(saveFileName)
 
         frameIndex += 1
 
