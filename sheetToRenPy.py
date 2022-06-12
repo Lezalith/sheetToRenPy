@@ -6,7 +6,7 @@ import easygui
 def pickFile():
 
     # Open the prompt.
-    a = easygui.fileopenbox( title = "Pick .gif to split:" )
+    a = easygui.fileopenbox( title = "Pick .png or .jpg to split:" )
 
     # Raise exception if a file wasn't picked
     if not a:
@@ -16,177 +16,178 @@ def pickFile():
     return a
 
 # File path with extension.
-gifFilePath = pickFile()
+sheetFilePath = pickFile()
 
 # File name with extension.
-gifFile = gifFilePath.split("\\")[-1]
+sheetFile = sheetFilePath.split("\\")[-1]
 
 # Check if extension is ".gif"
-if gifFile.split(".")[-1] != "gif":
-    raise Exception("That is not a gif!")
+if sheetFile.split(".")[-1] not in ["png", "jpg"]:
+    raise Exception("That is not a .png nor .jpg!")
 
 # File name without extension.
-gifFileName = ".".join(gifFile.split(".")[:-1])
+sheetFileName = ".".join(sheetFile.split(".")[:-1])
 
 # print(gifFilePath)
 # print(gifFile)
 # print(gifFileName)
 
 
-####### Preparing a directory for the output ######################################################
 
-# For checking and creating directories.
-import os 
+# ####### Preparing a directory for the output ######################################################
 
-# Folder inside which all results are placed.
-#
-# This is important because this directory is included in paths inside the generated .rpy file.
-# "images/" means the result inside should be placed inside a project's "images" folder.
-baseOutputDir = "images/"
+# # For checking and creating directories.
+# import os 
 
-# If the directory doesn't already exist...
-if not os.path.isdir(baseOutputDir):
+# # Folder inside which all results are placed.
+# #
+# # This is important because this directory is included in paths inside the generated .rpy file.
+# # "images/" means the result inside should be placed inside a project's "images" folder.
+# baseOutputDir = "images/"
 
-    # ...create it.
-    os.mkdir(baseOutputDir) 
+# # If the directory doesn't already exist...
+# if not os.path.isdir(baseOutputDir):
 
-# Folder inside which this result will be placed, in the form of "baseOutputDir/gifFileName/"
-gifOutputDir = baseOutputDir + gifFileName + "/"
+#     # ...create it.
+#     os.mkdir(baseOutputDir) 
+
+# # Folder inside which this result will be placed, in the form of "baseOutputDir/gifFileName/"
+# gifOutputDir = baseOutputDir + gifFileName + "/"
  
-# This directory must not already exist.
-if os.path.isdir(gifOutputDir):
-    raise Exception("It looks like the directory for output, \"{}\", exists already!".format( baseOutputDir + gifFileName ))
+# # This directory must not already exist.
+# if os.path.isdir(gifOutputDir):
+#     raise Exception("It looks like the directory for output, \"{}\", exists already!".format( baseOutputDir + gifFileName ))
 
-# Create the directory.
-os.mkdir(gifOutputDir)
-
-
-####### Gif into frames ###########################################################################
-
-# For the (gif -> png) conversion.
-from PIL import Image
-
-# Load in chosen file.
-im = Image.open(gifFilePath)
-
-# List of file paths to individual frames.
-# Used in creating the .rpy file.
-pathsToFrames = []
-
-# For every frame inside the loaded Image:
-for frameIndex in range( im.n_frames ):
-
-    # Point at another frame.
-    im.seek(frameIndex)
-
-    # Filename of the saved frame.
-    # Format is "[chosen file without extension][index of the frame].png"
-    saveFileName = gifOutputDir + "{}{}.png".format(gifFileName, frameIndex)
-
-    # Save the frame.
-    im.save( saveFileName )
-
-    # Save the frame path to a list.
-    # Used in creating the .rpy file.
-    pathsToFrames.append(saveFileName)
-
-print("\nSuccessfully saved all frames into \"{}\"\n\n###########################################################\n".format(gifOutputDir))
+# # Create the directory.
+# os.mkdir(gifOutputDir)
 
 
-####### Optionally creating a .rpy file.
+# ####### Gif into frames ###########################################################################
 
-createRpy = raw_input("Would you like to create a .rpy file with an image statement, defining the image for you?\nI do this by default, when nothing is typed in. Type \"n\" if you don't want me to. -- ")
+# # For the (gif -> png) conversion.
+# from PIL import Image
 
-# Negative input.
-if createRpy == "n":
+# # Load in chosen file.
+# im = Image.open(gifFilePath)
 
-    print("\n###########################################################\n\nSkipped creating the .rpy file.")
+# # List of file paths to individual frames.
+# # Used in creating the .rpy file.
+# pathsToFrames = []
 
-    # End the script.
-    exit()
+# # For every frame inside the loaded Image:
+# for frameIndex in range( im.n_frames ):
 
+#     # Point at another frame.
+#     im.seek(frameIndex)
 
-####### Settings for creating a Ren'Py image statement. ###########################################
+#     # Filename of the saved frame.
+#     # Format is "[chosen file without extension][index of the frame].png"
+#     saveFileName = gifOutputDir + "{}{}.png".format(gifFileName, frameIndex)
 
-print("\nYou will now be asked for some settings.\nDefault values are chosen when nothing is typed in.\n")
+#     # Save the frame.
+#     im.save( saveFileName )
 
-### Time interval between frames. ###################################
-pauseInterval = raw_input("Pause interval between frames? (float, default is 0.1) -- ")
+#     # Save the frame path to a list.
+#     # Used in creating the .rpy file.
+#     pathsToFrames.append(saveFileName)
 
-# Default, if nothing given.
-if not pauseInterval:
-
-    pauseInterval = 0.1
-
-# Convert it to a float.
-else:
-
-    try:
-        pauseInterval = float(pauseInterval)
-
-    # If cannot be converted:
-    except:
-        raise Exception("Pause interval, if given, must be a whole or a decimal number.")
+# print("\nSuccessfully saved all frames into \"{}\"\n\n###########################################################\n".format(gifOutputDir))
 
 
-### Whether the animation should repeat. ############################
-addRepeat = raw_input("Should the animation repeat? (y/n, default is \"n\") -- ")
+# ####### Optionally creating a .rpy file.
 
-# Positive input.
-if addRepeat == "y":
+# createRpy = raw_input("Would you like to create a .rpy file with an image statement, defining the image for you?\nI do this by default, when nothing is typed in. Type \"n\" if you don't want me to. -- ")
 
-    addRepeat = True
+# # Negative input.
+# if createRpy == "n":
 
-# Negative or no input.
-elif addRepeat == "n" or not addRepeat:
+#     print("\n###########################################################\n\nSkipped creating the .rpy file.")
 
-    addRepeat = False
-
-# Something else typed in.
-else:
-
-    raise Exception("Something other than \"y\", \"n\" or \"\" typed in.")
+#     # End the script.
+#     exit()
 
 
-### Properties that will be added onto the first line. ##############
-### These will be in effect throughout the whole animation. #########
-firstProperties = raw_input("Add some properties onto the first line? (Properties written like you would in ATL, none by default) -- ")
+# ####### Settings for creating a Ren'Py image statement. ###########################################
 
-# If none are given, the line won't be added at all.
-if not firstProperties:
+# print("\nYou will now be asked for some settings.\nDefault values are chosen when nothing is typed in.\n")
 
-    firstProperties = None
+# ### Time interval between frames. ###################################
+# pauseInterval = raw_input("Pause interval between frames? (float, default is 0.1) -- ")
+
+# # Default, if nothing given.
+# if not pauseInterval:
+
+#     pauseInterval = 0.1
+
+# # Convert it to a float.
+# else:
+
+#     try:
+#         pauseInterval = float(pauseInterval)
+
+#     # If cannot be converted:
+#     except:
+#         raise Exception("Pause interval, if given, must be a whole or a decimal number.")
 
 
-####### Creating a .rpy file with an image statement. #############################################
+# ### Whether the animation should repeat. ############################
+# addRepeat = raw_input("Should the animation repeat? (y/n, default is \"n\") -- ")
 
-# Path of the .rpy file with extension.
-rpyFilePath = gifOutputDir + gifFileName + ".rpy"
+# # Positive input.
+# if addRepeat == "y":
 
-# Create the file.
-with open(rpyFilePath, "w+") as f:
+#     addRepeat = True
 
-    # Image statement (first line)
-    statement = "image " + gifFileName + ":\n"
+# # Negative or no input.
+# elif addRepeat == "n" or not addRepeat:
 
-    f.write(statement)
+#     addRepeat = False
 
-    # Add properties onto the first line if any were given.
-    if firstProperties is not None:
+# # Something else typed in.
+# else:
 
-        properties = "    " + firstProperties + "\n"
+#     raise Exception("Something other than \"y\", \"n\" or \"\" typed in.")
 
-        f.write(properties)
 
-    # Write an image path, followed by a pause of given interval.
-    for pathToFrame in pathsToFrames:
+# ### Properties that will be added onto the first line. ##############
+# ### These will be in effect throughout the whole animation. #########
+# firstProperties = raw_input("Add some properties onto the first line? (Properties written like you would in ATL, none by default) -- ")
 
-        f.write( "    " + "\"" + pathToFrame + "\"\n" )
-        f.write( "    " + "pause " + str(pauseInterval) + "\n" )
+# # If none are given, the line won't be added at all.
+# if not firstProperties:
 
-    # Optionally finish with a repeat.
-    if addRepeat:
+#     firstProperties = None
 
-        f.write("    repeat")
 
-print("\n###########################################################\n\nSuccessfully saved the .rpy file as \"{}\"".format(rpyFilePath))
+# ####### Creating a .rpy file with an image statement. #############################################
+
+# # Path of the .rpy file with extension.
+# rpyFilePath = gifOutputDir + gifFileName + ".rpy"
+
+# # Create the file.
+# with open(rpyFilePath, "w+") as f:
+
+#     # Image statement (first line)
+#     statement = "image " + gifFileName + ":\n"
+
+#     f.write(statement)
+
+#     # Add properties onto the first line if any were given.
+#     if firstProperties is not None:
+
+#         properties = "    " + firstProperties + "\n"
+
+#         f.write(properties)
+
+#     # Write an image path, followed by a pause of given interval.
+#     for pathToFrame in pathsToFrames:
+
+#         f.write( "    " + "\"" + pathToFrame + "\"\n" )
+#         f.write( "    " + "pause " + str(pauseInterval) + "\n" )
+
+#     # Optionally finish with a repeat.
+#     if addRepeat:
+
+#         f.write("    repeat")
+
+# print("\n###########################################################\n\nSuccessfully saved the .rpy file as \"{}\"".format(rpyFilePath))
