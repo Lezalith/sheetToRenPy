@@ -70,29 +70,54 @@ from PIL import Image
 # Load in chosen file.
 im = Image.open(sheetFilePath)
 
-framesize = eval(raw_input("Please give the size of one frame. This needs to be a tuple of (px width, px heigth) -- "))
-gridsize = eval(raw_input("Please give the total size of grid. This needs to be a tuple of (rows, columns) -- "))
+# Test values
+framesize = (120, 80)
+gridsize = (1, 6)
+amountOfFrames = None
 
-pauseInterval = raw_input("Pause interval between frames? float, default is 0.1 -- ")
-# Default, if nothing given.
-if not pauseInterval:
-    pauseInterval = "0.1"
+# framesize = eval(raw_input("Please give the size of one frame. This needs to be a tuple of (px width, px heigth) -- "))
+# gridsize = eval(raw_input("Please give the total size of grid. This needs to be a tuple of (rows, columns) -- "))
 
-amountOfFrames = raw_input("How many frames are there? int, default of (num of rows given * num of cols given) -- ")
-if not amountOfFrames:
-    amountOfFrames = gridsize[0] * gridsize[1]
-else:
-    amountOfFrames = eval(amountOfFrames)
+# pauseInterval = raw_input("Pause interval between frames? float, default is 0.1 -- ")
+# # Default, if nothing given.
+# if not pauseInterval:
+#     pauseInterval = "0.1"
+
+# amountOfFrames = raw_input("How many frames are there? int, default of (num of rows given * num of cols given) -- ")
+# if not amountOfFrames:
+#     amountOfFrames = gridsize[0] * gridsize[1]
+# else:
+#     amountOfFrames = eval(amountOfFrames)
 
 # List of file paths to individual frames.
 # Used in creating the .rpy file.
 # pathsToFrames = []
 
-# Width and height of one tile
-width, height = im.size
+imageWidth, imageHeigth = im.size
 
-im1 = im.crop( (0, 0, width // 6, height) )
-im1.save("01.png")
+oneFrameWidth = imageWidth // gridsize[1]
+oneFrameHeigth = imageHeigth // gridsize[0]
+
+frameIndex = 0
+
+# For every row...
+for rowIndex in range(gridsize[0]):
+
+    # For every column inside that row...
+    for columnIndex in range(gridsize[1]):
+
+        x = oneFrameWidth * columnIndex
+        y = oneFrameHeigth * rowIndex
+        xEnd = oneFrameWidth * (columnIndex + 1)
+        yEnd = oneFrameHeigth * (rowIndex + 1)
+
+        print("Creating a frame (coords:({}, {})): [{}, {}], [{}, {}]".format(rowIndex + 1, columnIndex + 1, x, y, xEnd, yEnd))
+
+        frame = im.crop( (x, y, xEnd, yEnd) )
+
+        frame.save("{}.png".format(frameIndex))
+
+        frameIndex += 1
 
 # # For every frame inside the loaded Image:
 # for frameIndex in range( im.n_frames ):
