@@ -79,11 +79,6 @@ amountOfFrames = gridsize[0] * gridsize[1]
 # framesize = eval(raw_input("Please give the size of one frame. This needs to be a tuple of (px width, px heigth) -- "))
 # gridsize = eval(raw_input("Please give the total size of grid. This needs to be a tuple of (rows, columns) -- "))
 
-# pauseInterval = raw_input("Pause interval between frames? float, default is 0.1 -- ")
-# # Default, if nothing given.
-# if not pauseInterval:
-#     pauseInterval = "0.1"
-
 # amountOfFrames = raw_input("How many frames are there? int, default of (num of rows given * num of cols given) -- ")
 # if not amountOfFrames:
 #     amountOfFrames = gridsize[0] * gridsize[1]
@@ -150,61 +145,67 @@ for rowIndex in range(gridsize[0]):
 print("\nSuccessfully saved all frames into \"{}\"\n\n###########################################################\n".format(sheetOutputDir))
 
 
-# ####### Optionally creating a .rpy file.
+####### Optionally creating a .rpy file.
 
-# createRpy = raw_input("Would you like to create a .rpy file with an image statement, defining the image for you?\nI do this by default, when nothing is typed in. Type \"n\" if you don't want me to. -- ")
+createRpy = raw_input("Would you like to create a .rpy file with an image statement, defining the image for you?\nI do this by default, when nothing is typed in. Type \"n\" if you don't want me to. -- ")
 
-# # Negative input.
-# if createRpy == "n":
+# Negative input.
+if createRpy == "n":
 
-#     print("\n###########################################################\n\nSkipped creating the .rpy file.")
+    print("\n###########################################################\n\nSkipped creating the .rpy file.")
 
-#     # End the script.
-#     exit()
-
-
-# ####### Settings for creating a Ren'Py image statement. ###########################################
-
-# print("\nYou will now be asked for some settings.\nDefault values are chosen when nothing is typed in.\n")
-
-# # Convert it to a float.
-# else:
-
-#     try:
-#         pauseInterval = float(pauseInterval)
-
-#     # If cannot be converted:
-#     except:
-#         raise Exception("Pause interval, if given, must be a whole or a decimal number.")
+    # End the script.
+    exit()
 
 
-# ### Whether the animation should repeat. ############################
-# addRepeat = raw_input("Should the animation repeat? (y/n, default is \"n\") -- ")
+####### Settings for creating a Ren'Py image statement. ###########################################
 
-# # Positive input.
-# if addRepeat == "y":
+print("\nYou will now be asked for some settings.\nDefault values are chosen when nothing is typed in.\n")
 
-#     addRepeat = True
+pauseInterval = raw_input("Pause interval between frames? float, default is 0.1 -- ")
 
-# # Negative or no input.
-# elif addRepeat == "n" or not addRepeat:
+# Default
+if not pauseInterval:
+    pauseInterval = 0.1
 
-#     addRepeat = False
+else:
+    
+    # It should be a float.
+    try:
+        pauseInterval = eval(pauseInterval)
 
-# # Something else typed in.
-# else:
+    # If cannot be converted:
+    except:
+        raise Exception("Pause interval, if given, must be a whole or a decimal number.")
 
-#     raise Exception("Something other than \"y\", \"n\" or \"\" typed in.")
+
+### Whether the animation should repeat. ############################
+addRepeat = raw_input("Should the animation repeat? (y/n, default is \"n\") -- ")
+
+# Positive input.
+if addRepeat == "y":
+
+    addRepeat = True
+
+# Negative or no input.
+elif addRepeat == "n" or not addRepeat:
+
+    addRepeat = False
+
+# Something else typed in.
+else:
+
+    raise Exception("Something other than \"y\", \"n\" or \"\" typed in.")
 
 
-# ### Properties that will be added onto the first line. ##############
-# ### These will be in effect throughout the whole animation. #########
-# firstProperties = raw_input("Add some properties onto the first line? (Properties written like you would in ATL, none by default) -- ")
+### Properties that will be added onto the first line. ##############
+### These will be in effect throughout the whole animation. #########
+firstProperties = raw_input("Add some properties onto the first line? (Properties written like you would in ATL, none by default) -- ")
 
-# # If none are given, the line won't be added at all.
-# if not firstProperties:
+# If none are given, the line won't be added at all.
+if not firstProperties:
 
-#     firstProperties = None
+    firstProperties = None
 
 
 # ####### Creating a .rpy file with an image statement. #############################################
