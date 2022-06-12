@@ -62,17 +62,23 @@ sheetFileName = ".".join(sheetFile.split(".")[:-1])
 # os.mkdir(gifOutputDir)
 
 
-# ####### Gif into frames ###########################################################################
+####### Sheet into frames ###########################################################################
 
-# # For the (gif -> png) conversion.
-# from PIL import Image
+# For the whole process.
+from PIL import Image
 
-# # Load in chosen file.
-# im = Image.open(gifFilePath)
+# Load in chosen file.
+im = Image.open(sheetFilePath)
 
-# # List of file paths to individual frames.
-# # Used in creating the .rpy file.
+# List of file paths to individual frames.
+# Used in creating the .rpy file.
 # pathsToFrames = []
+
+# Width and height of one tile
+width, height = im.size
+
+im1 = im.crop( (0, 0, width // 6, height) )
+im1.save("01.png")
 
 # # For every frame inside the loaded Image:
 # for frameIndex in range( im.n_frames ):
