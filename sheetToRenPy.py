@@ -208,35 +208,35 @@ if not firstProperties:
     firstProperties = None
 
 
-# ####### Creating a .rpy file with an image statement. #############################################
+####### Creating a .rpy file with an image statement. #############################################
 
-# # Path of the .rpy file with extension.
-# rpyFilePath = sheetOutputDir + sheetFileName + ".rpy"
+# Path of the .rpy file with extension.
+rpyFilePath = sheetOutputDir + sheetFileName + ".rpy"
 
-# # Create the file.
-# with open(rpyFilePath, "w+") as f:
+# Create the file.
+with open(rpyFilePath, "w+") as f:
 
-#     # Image statement (first line)
-#     statement = "image " + sheetFileName + ":\n"
+    # Image statement (first line)
+    statement = "image " + sheetFileName + ":\n"
 
-#     f.write(statement)
+    f.write(statement)
 
-#     # Add properties onto the first line if any were given.
-#     if firstProperties is not None:
+    # Add properties onto the first line if any were given.
+    if firstProperties is not None:
 
-#         properties = "    " + firstProperties + "\n"
+        properties = "    " + firstProperties + "\n"
 
-#         f.write(properties)
+        f.write(properties)
 
-#     # Write an image path, followed by a pause of given interval.
-#     for pathToFrame in pathsToFrames:
+    # Write an image path, followed by a pause of given interval.
+    for pathToFrame in pathsToFrames:
 
-#         f.write( "    " + "\"" + pathToFrame + "\"\n" )
-#         f.write( "    " + "pause " + str(pauseInterval) + "\n" )
+        f.write( "    " + "\"" + pathToFrame + "\"\n" )
+        f.write( "    " + "pause " + str(pauseInterval) + "\n" )
 
-#     # Optionally finish with a repeat.
-#     if addRepeat:
+    # Optionally finish with a repeat.
+    if addRepeat:
 
-#         f.write("    repeat")
+        f.write("    repeat")
 
-# print("\n###########################################################\n\nSuccessfully saved the .rpy file as \"{}\"".format(rpyFilePath))
+print("\n###########################################################\n\nSuccessfully saved the .rpy file as \"{}\"".format(rpyFilePath))
