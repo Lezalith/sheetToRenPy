@@ -69,23 +69,21 @@ from PIL import Image
 # Load in chosen file.
 im = Image.open(sheetFilePath)
 
-# TEST VALUES ######### 
-framesize = (120, 80)
-gridsize = (1, 6)
-amountOfFrames = gridsize[0] * gridsize[1]
-#######################
+# # TEST VALUES ######### 
+# framesize = (120, 80)
+# gridsize = (1, 6)
+# amountOfFrames = gridsize[0] * gridsize[1]
+# #######################
 
-# REAL VALUES ######### 
-# framesize = eval(raw_input("Please give the size of one frame. This needs to be a tuple of (px width, px heigth) -- "))
-# gridsize = eval(raw_input("Please give the total size of grid. This needs to be a tuple of (rows, columns) -- "))
+# Input values: 
+framesize = eval(raw_input("Please give the size of one frame. This needs to be a tuple of (px width, px heigth) -- "))
+gridsize = eval(raw_input("Please give the total size of grid. This needs to be a tuple of (rows, columns) -- "))
 
-# amountOfFrames = raw_input("How many frames are there? int, default of (num of rows given * num of cols given) -- ")
-# if not amountOfFrames:
-#     amountOfFrames = gridsize[0] * gridsize[1]
-# else:
-#     amountOfFrames = eval(amountOfFrames)
-
-#######################
+amountOfFrames = raw_input("How many frames are there? int, default of (num of rows given * num of cols given) -- ")
+if not amountOfFrames:
+    amountOfFrames = gridsize[0] * gridsize[1]
+else:
+    amountOfFrames = eval(amountOfFrames)
 
 # List of file paths to individual frames.
 # Used in creating the .rpy file.
@@ -169,7 +167,7 @@ if not pauseInterval:
     pauseInterval = 0.1
 
 else:
-    
+
     # It should be a float.
     try:
         pauseInterval = eval(pauseInterval)
