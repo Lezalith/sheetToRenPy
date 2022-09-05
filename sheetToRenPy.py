@@ -3,6 +3,11 @@
 # Folder into which results are placed.
 BASE_OUTPUT_FOLDER = "images/"
 
+# Defaults when creating the .rpy file with an image statement.
+DEFAULT_RPY_PAUSE = 0.1
+DEFAULT_RPY_REPEAT = False
+DEFAULT_RPY_PROPERTIES = None
+
 import sys
 
 if len(sys.argv):
@@ -149,10 +154,10 @@ print("\nSuccessfully saved all frames into \"{}\"\n\n##########################
 
 ####### Optionally creating a .rpy file.
 
-createRpy = raw_input("Would you like to create a .rpy file with an image statement, defining the image for you?\nThis is done by default, when nothing is typed in. Type \"n\" if you don't want to. -- ")
+createRpy = raw_input("Would you like to create a .rpy file with an image statement, defining the image for you?\nType in \"y\" if so. --")
 
 # Negative input.
-if createRpy == "n":
+if not createRpy == "y":
 
     print("\n###########################################################\n\nSkipped creating the .rpy file.")
 
@@ -164,50 +169,35 @@ if createRpy == "n":
 
 print("\nYou will now be asked for some settings.\nDefault values are chosen when nothing is typed in.\n")
 
-pauseInterval = raw_input("Pause interval between frames? float, default is 0.1 -- ")
+pauseInterval = raw_input("Pause interval between frames? float, default is DEFAULT_RPY_PAUSE -- ")
 
 # Default
-if not pauseInterval:
-    pauseInterval = 0.1
-
-else:
-
-    # It should be a float.
-    try:
-        pauseInterval = float(pauseInterval)
-
-    # If cannot be converted:
-    except:
-        raise Exception("Pause interval, if given, must be a whole or a decimal number.")
 
 
 ### Whether the animation should repeat. ############################
-addRepeat = raw_input("Should the animation repeat? (y/n, default is \"y\") -- ")
+addRepeat = raw_input("Should the animation repeat? (\"y\" or \"n\", default is DEFAULT_RPY_REPEAT) -- ")
 
-# Positive input.
-if addRepeat == "y" or not addRepeat:
-
-    addRepeat = True
-
-# Negative or no input.
-elif addRepeat == "n":
+# Negative input.
+if addRepeat == "n":
 
     addRepeat = False
 
-# Something else typed in.
+elif addRepeat == "y":
+
+    addRepeat = True
+
 else:
 
-    raise Exception("Something other than \"y\", \"n\" or \"\" typed in.")
-
+    addRepeat = DEFAULT_RPY_REPEAT
 
 ### Properties that will be added onto the first line. ##############
 ### These will be in effect throughout the whole animation. #########
-firstProperties = raw_input("Add some properties onto the first line? (Properties written like you would in ATL, none by default) -- ")
+firstProperties = raw_input("Add some properties onto the first line? (Properties written like you would in ATL, DEFAULT_RPY_PROPERTIES by default) -- ")
 
 # If none are given, the line won't be added at all.
 if not firstProperties:
 
-    firstProperties = None
+    firstProperties = DEFAULT_RPY_PROPERTIES
 
 
 ####### Creating a .rpy file with an image statement. #############################################
