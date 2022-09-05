@@ -1,5 +1,13 @@
 ####### File stuff ################################################################################
 
+# Folder into which results are placed.
+BASE_OUTPUT_FOLDER = "images/"
+
+import sys
+
+if len(sys.argv):
+    print("Script had nothing dragged on it.\nLetting the user to pick a file.")
+
 # Lets you pick a file and returns it.
 import easygui
 
@@ -10,20 +18,20 @@ def pickFile():
 
     # Raise exception if a file wasn't picked
     if not a:
-        raise Exception("Nothing selected!")
+        raise Exception("No file was selected!")
         
-    # Return the file.
+    # Return the file path.
     return a
 
-# File path with extension.
+# File PATH with extension.
 sheetFilePath = pickFile()
 
-# File name with extension.
+# File NAME with extension.
 sheetFile = sheetFilePath.split("\\")[-1]
 
 # Check if extension is ".png" or ".jpg"
 if sheetFile.split(".")[-1] not in ["png", "jpg"]:
-    raise Exception("That is not a .png nor .jpg!")
+    raise Exception("Selected image has to be a .png or .jpg!")
 
 # File name without extension.
 sheetFileName = ".".join(sheetFile.split(".")[:-1])
@@ -39,23 +47,19 @@ sheetFileName = ".".join(sheetFile.split(".")[:-1])
 import os 
 
 # Folder inside which all results are placed.
-#
-# This is important because this directory is included in paths inside the generated .rpy file.
-# "images/" means the result inside should be placed inside a project's "images" folder.
-baseOutputDir = "images/"
 
 # If the directory doesn't already exist...
-if not os.path.isdir(baseOutputDir):
+if not os.path.isdir(BASE_OUTPUT_FOLDER):
 
     # ...create it.
-    os.mkdir(baseOutputDir) 
+    os.mkdir(BASE_OUTPUT_FOLDER) 
 
-# Folder inside which this result will be placed, in the form of "baseOutputDir/sheetFileName/"
-sheetOutputDir = baseOutputDir + sheetFileName + "/"
+# Folder inside which this result will be placed, in the form of "BASE_OUTPUT_FOLDER/sheetFileName/"
+sheetOutputDir = BASE_OUTPUT_FOLDER + sheetFileName + "/"
  
-# This directory must not already exist.
+# This folder must not already exist.
 if os.path.isdir(sheetOutputDir):
-    raise Exception("It looks like the directory for output, \"{}\", exists already!".format( baseOutputDir + sheetFileName ))
+    raise Exception("It looks like the directory for output, \"{}\", exists already!".format( sheetOutputDir ))
 
 # Create the directory.
 os.mkdir(sheetOutputDir)
@@ -63,7 +67,7 @@ os.mkdir(sheetOutputDir)
 
 ####### Sheet into frames ###########################################################################
 
-# For the whole process.
+# Module responsible for all the image manipulation.
 from PIL import Image
 
 # Load in chosen file.
@@ -89,10 +93,10 @@ else:
 # Used in creating the .rpy file.
 pathsToFrames = []
 
-# Image dimensions
+# Dimensions of the picked image.
 imageWidth, imageHeigth = im.size
 
-# Frame dimensions
+# Dimensions of one frame.
 oneFrameWidth = imageWidth // gridsize[1]
 oneFrameHeigth = imageHeigth // gridsize[0]
 
@@ -115,14 +119,14 @@ for rowIndex in range(gridsize[0]):
 
         print("Creating a frame (coords:({}, {})): [{}, {}], [{}, {}]".format(rowIndex + 1, columnIndex + 1, x, y, xEnd, yEnd))
 
-        # Created frame.
+        # Created frame image.
         frame = im.crop( (x, y, xEnd, yEnd) )
 
         # Filename of the saved frame.
         # Format is "[chosen file without extension][index of the frame].png"
         saveFileName = sheetOutputDir + "{}{}.png".format(sheetFileName, frameIndex)
 
-        # Save the frame.
+        # Save the frame image.
         frame.save(saveFileName)
 
         # Save the frame path to a list.
@@ -145,7 +149,7 @@ print("\nSuccessfully saved all frames into \"{}\"\n\n##########################
 
 ####### Optionally creating a .rpy file.
 
-createRpy = raw_input("Would you like to create a .rpy file with an image statement, defining the image for you?\nI do this by default, when nothing is typed in. Type \"n\" if you don't want me to. -- ")
+createRpy = raw_input("Would you like to create a .rpy file with an image statement, defining the image for you?\nThis is done by default, when nothing is typed in. Type \"n\" if you don't want to. -- ")
 
 # Negative input.
 if createRpy == "n":
@@ -153,7 +157,7 @@ if createRpy == "n":
     print("\n###########################################################\n\nSkipped creating the .rpy file.")
 
     # End the script.
-    exit()
+    input()
 
 
 ####### Settings for creating a Ren'Py image statement. ###########################################
@@ -170,7 +174,7 @@ else:
 
     # It should be a float.
     try:
-        pauseInterval = eval(pauseInterval)
+        pauseInterval = float(pauseInterval)
 
     # If cannot be converted:
     except:
@@ -178,15 +182,15 @@ else:
 
 
 ### Whether the animation should repeat. ############################
-addRepeat = raw_input("Should the animation repeat? (y/n, default is \"n\") -- ")
+addRepeat = raw_input("Should the animation repeat? (y/n, default is \"y\") -- ")
 
 # Positive input.
-if addRepeat == "y":
+if addRepeat == "y" or not addRepeat:
 
     addRepeat = True
 
 # Negative or no input.
-elif addRepeat == "n" or not addRepeat:
+elif addRepeat == "n":
 
     addRepeat = False
 
